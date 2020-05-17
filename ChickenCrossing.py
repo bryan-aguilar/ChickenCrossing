@@ -2,6 +2,9 @@ import pygame
 import pygame.display
 import random
 import pygame.draw
+import pygame_menu
+
+
 from pygame.locals import(
     K_UP,
     K_DOWN,
@@ -171,6 +174,12 @@ def createCustomEvents(e_list,num):
     for i in range(num):
         e_list.append(pygame.USEREVENT + (i+1))
 
+def main_menu():
+    menu = pygame_menu.Menu(SCREEN_HEIGHT,SCREEN_WIDTH, 'Chicken Crossing',theme=pygame_menu.themes.THEME_BLUE)
+    menu.add_button("Play",main)
+    menu.add_button("Quit",pygame_menu.events.EXIT)
+    menu.mainloop(screen)
+    
 
 def main():
 
@@ -250,5 +259,5 @@ def main():
 
 
 
-
+main_menu()
 main()
