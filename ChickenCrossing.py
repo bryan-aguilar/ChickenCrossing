@@ -29,9 +29,11 @@ ARROW_KEYS = [K_DOWN,K_UP,K_LEFT,K_RIGHT]
 #This centers the game on the screen
 #position of first conveyor belt
 #position is set for the center of the screen and subtracts half the size of 7 conveyor belts
+#The math here ensures that the position is a multiple of 25 so that our block movement is correct
 #TODO: Pass in NUM_CONV constant when it gets changed to global
-FIRST_CONVEYOR_LINE = (0,int((SCREEN_HEIGHT/2)-((25*7)/2)))
-CONVEYOR_STARTING_Y = int((SCREEN_HEIGHT/2)-((25*7)/2))
+FIRST_CONVEYOR_LINE = (0,round(int((SCREEN_HEIGHT/2)-((25*7)/2))/5)*5)
+CONVEYOR_STARTING_Y = round(int((SCREEN_HEIGHT/2)-((25*7)/2))/5)*5
+print(str(FIRST_CONVEYOR_LINE) + str(CONVEYOR_STARTING_Y))
 CONVEYOR_STARTING_X = 0
 
 #our player class
@@ -39,7 +41,7 @@ class Player(pygame.sprite.Sprite):
     def __init__(self):
         super(Player,self).__init__()
         self.surf = pygame.Surface(PLAYER_SIZE)
-        self.surf.fill((255,255,255))
+        self.surf.fill((255,255,0))
         self.rect = self.surf.get_rect()
     
     def update(self,key_event):
@@ -219,12 +221,12 @@ def main():
     
     while running:
         #background color
-        screen.fill((0,0,0))
+        screen.fill((255,255,255))
         #draw safe space
         #TODO: Consolidate into function
         #Safe space is drawn on center of screen
         first_conv_rect = (FIRST_CONVEYOR_LINE,(SCREEN_WIDTH,25*num_conv))
-        screen.fill((0,255,0),first_conv_rect)
+        screen.fill((95,141,188),first_conv_rect)
 
         #event loop
         for event in pygame.event.get():
