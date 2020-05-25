@@ -30,10 +30,12 @@ ARROW_KEYS = [K_DOWN,K_UP,K_LEFT,K_RIGHT]
 #position of first conveyor belt
 #position is set for the center of the screen and subtracts half the size of 7 conveyor belts
 #The math here ensures that the position is a multiple of 25 so that our block movement is correct
+#Note: This could be logically wrong and this is a quick fix. If there are issues with positioning of blocks
+#later look at this
 #TODO: Pass in NUM_CONV constant when it gets changed to global
-FIRST_CONVEYOR_LINE = (0,round(int((SCREEN_HEIGHT/2)-((25*7)/2))/5)*5)
-CONVEYOR_STARTING_Y = round(int((SCREEN_HEIGHT/2)-((25*7)/2))/5)*5
-print(str(FIRST_CONVEYOR_LINE) + str(CONVEYOR_STARTING_Y))
+FIRST_CONVEYOR_LINE = (0,round(int((SCREEN_HEIGHT/2)-((25*7)/2))/25)*25)
+print(str(FIRST_CONVEYOR_LINE))
+CONVEYOR_STARTING_Y = round(int((SCREEN_HEIGHT/2)-((25*7)/2))/25)*25
 CONVEYOR_STARTING_X = 0
 
 #our player class
@@ -226,8 +228,13 @@ def main():
         #TODO: Consolidate into function
         #Safe space is drawn on center of screen
         first_conv_rect = (FIRST_CONVEYOR_LINE,(SCREEN_WIDTH,25*num_conv))
-        screen.fill((95,141,188),first_conv_rect)
-
+        screen.fill((95,141,188),first_conv_rect)   
+        #draw starting and finishing area
+        starting_zone_rect = ((FIRST_CONVEYOR_LINE[0],FIRST_CONVEYOR_LINE[1]-25),(50,25))
+        finishing_zone_rect = ((SCREEN_WIDTH-50,FIRST_CONVEYOR_LINE[1]+(25*7)),(50,25))
+        #print(str(finishing_zone_rect))
+        screen.fill((0,0,0),finishing_zone_rect)
+        screen.fill((0,0,0),starting_zone_rect)
         #event loop
         for event in pygame.event.get():
             
