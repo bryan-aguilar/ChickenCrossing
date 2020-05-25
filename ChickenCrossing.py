@@ -16,8 +16,8 @@ from pygame.locals import(
 )
 pygame.init()
 #constants
-SCREEN_WIDTH = 1000
-SCREEN_HEIGHT = 500
+SCREEN_WIDTH = 800
+SCREEN_HEIGHT = 400
 PLAYER_SIZE = (25,25)
 #our clock to control frame rate
 clock = pygame.time.Clock()
@@ -27,10 +27,13 @@ screen = pygame.display.set_mode([SCREEN_WIDTH,SCREEN_HEIGHT])
 ARROW_KEYS = [K_DOWN,K_UP,K_LEFT,K_RIGHT]
 
 #position of first conveyor belt
-FIRST_CONVEYOR_LINE = (0,200)
+#FIRST_CONVEYOR_LINE = (0,200)
+FIRST_CONVEYOR_LINE = (0,int((SCREEN_HEIGHT/2)-((25*7)/2)))
 
 CONVEYOR_STARTING_X = 0
-CONVEYOR_STARTING_Y = 200
+#Starting location is drawn from the top down. So starting Y is the top most conveyor
+#CONVEYOR_STARTING_Y = 200
+CONVEYOR_STARTING_Y = int((SCREEN_HEIGHT/2)-((25*7)/2))
 
 #our player class
 class Player(pygame.sprite.Sprite):
@@ -184,6 +187,8 @@ def main_menu():
 def main():
 
     #determine how many lines
+    #TODO: Make this a global constant since it will be fixed. Will need to subsequently 
+    #change all future function calls because this can be accessed globally
     num_conv = 7
     #conv_list object contains all of our conveyor line objects
     #conv_list[0] will be the top most line
@@ -217,6 +222,8 @@ def main():
         #background color
         screen.fill((0,0,0))
         #draw safe space
+        #TODO: Consolidate into function
+        #Safe space is drawn on center of screen
         first_conv_rect = (FIRST_CONVEYOR_LINE,(SCREEN_WIDTH,25*num_conv))
         screen.fill((0,255,0),first_conv_rect)
 
@@ -259,5 +266,5 @@ def main():
 
 
 
-main_menu()
+#main_menu()
 main()
