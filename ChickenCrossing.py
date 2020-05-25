@@ -34,9 +34,16 @@ ARROW_KEYS = [K_DOWN,K_UP,K_LEFT,K_RIGHT]
 #later look at this
 #TODO: Pass in NUM_CONV constant when it gets changed to global
 FIRST_CONVEYOR_LINE = (0,round(int((SCREEN_HEIGHT/2)-((25*7)/2))/25)*25)
-print(str(FIRST_CONVEYOR_LINE))
 CONVEYOR_STARTING_Y = round(int((SCREEN_HEIGHT/2)-((25*7)/2))/25)*25
 CONVEYOR_STARTING_X = 0
+
+#This should be the only location that our player can move
+#TODO:Need to figure out a way to make safe space included. Or just
+#make starting positions a single spot
+MOVEABLE_AREA_RECT_POS = (FIRST_CONVEYOR_LINE,(SCREEN_WIDTH,25*7))
+MOVEABLE_AREA_RECT = pygame.Rect(MOVEABLE_AREA_RECT_POS)
+print(str(MOVEABLE_AREA_RECT))
+
 
 #our player class
 class Player(pygame.sprite.Sprite):
@@ -44,9 +51,13 @@ class Player(pygame.sprite.Sprite):
         super(Player,self).__init__()
         self.surf = pygame.Surface(PLAYER_SIZE)
         self.surf.fill((255,255,0))
-        self.rect = self.surf.get_rect()
+        self.rect = self.surf.get_rect(
+                left = FIRST_CONVEYOR_LINE[0],
+                top = FIRST_CONVEYOR_LINE[1]-25
+            )
     
     def update(self,key_event):
+        self.prev_location = self.rect.copy()
         if key_event == K_UP:
             self.rect.move_ip(0,-25)
         elif key_event == K_DOWN:
@@ -57,6 +68,9 @@ class Player(pygame.sprite.Sprite):
             self.rect.move_ip(-25,0)
             
         #bounds checking
+        print(str(not(MOVEABLE_AREA_RECT.contains(self.rect))))
+        if not(MOVEABLE_AREA_RECT.contains(self.rect)):
+            self.rect = self.prev_location
         if self.rect.left < 0:
             self.rect.left = 0
         if self.rect.right > SCREEN_WIDTH:
@@ -65,6 +79,7 @@ class Player(pygame.sprite.Sprite):
             self.rect.bottom = SCREEN_HEIGHT  
         if self.rect.top <= 0:
             self.rect.top = 0
+        
         
 
 class EnemyBlock(pygame.sprite.Sprite):
@@ -232,7 +247,6 @@ def main():
         #draw starting and finishing area
         starting_zone_rect = ((FIRST_CONVEYOR_LINE[0],FIRST_CONVEYOR_LINE[1]-25),(50,25))
         finishing_zone_rect = ((SCREEN_WIDTH-50,FIRST_CONVEYOR_LINE[1]+(25*7)),(50,25))
-        #print(str(finishing_zone_rect))
         screen.fill((0,0,0),finishing_zone_rect)
         screen.fill((0,0,0),starting_zone_rect)
         #event loop
