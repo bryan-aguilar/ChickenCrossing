@@ -42,7 +42,6 @@ CONVEYOR_STARTING_X = 0
 #make starting positions a single spot
 MOVEABLE_AREA_RECT_POS = (FIRST_CONVEYOR_LINE,(SCREEN_WIDTH,25*7))
 MOVEABLE_AREA_RECT = pygame.Rect(MOVEABLE_AREA_RECT_POS)
-print(str(MOVEABLE_AREA_RECT))
 
 
 #our player class
@@ -68,7 +67,6 @@ class Player(pygame.sprite.Sprite):
             self.rect.move_ip(-25,0)
             
         #bounds checking
-        print(str(not(MOVEABLE_AREA_RECT.contains(self.rect))))
         if not(MOVEABLE_AREA_RECT.contains(self.rect)):
             self.rect = self.prev_location
         if self.rect.left < 0:
