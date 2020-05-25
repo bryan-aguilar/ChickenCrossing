@@ -44,8 +44,10 @@ MOVEABLE_AREA_RECT_POS = (FIRST_CONVEYOR_LINE,(SCREEN_WIDTH,25*7))
 MOVEABLE_AREA_RECT = pygame.Rect(MOVEABLE_AREA_RECT_POS)
 
 
-#our player class
+
 class Player(pygame.sprite.Sprite):
+    '''Player Class that controls movement'''
+    #TODO:Fix location positiont be passed in and dynamic
     def __init__(self):
         super(Player,self).__init__()
         self.surf = pygame.Surface(PLAYER_SIZE)
@@ -77,14 +79,26 @@ class Player(pygame.sprite.Sprite):
             self.rect.bottom = SCREEN_HEIGHT  
         if self.rect.top <= 0:
             self.rect.top = 0
-        
+
+class FinishingArea(pygame.sprite.Sprite):
+    '''This will hold our finishing area. Finishing area will be randomly
+    selected for each new level. The width will also change depending on the level.
+    Starter levels will have wider finishing areas and narrow as levels increase.
+    I believe only one of these sprites will be neccesary and the location
+    can be updated for each level. 
+    '''
+    #TODO:Build out class
+    def __init__(self):
+        super(FinishingArea,self).__init__()
+            
         
 
 class EnemyBlock(pygame.sprite.Sprite):
-    #This is our enemy block class
-    #The only values it holds is the size and speed at which it moves
-    #Currently the size is fixed at 25 units high and the width is passed in
-    #Width is stored individually for each conveyor belt in the conveyor belt class
+    '''This is our enemy block class
+    The only values it holds is the size and speed at which it moves
+    Currently the size is fixed at 25 units high and the width is passed in
+    Width is stored individually for each conveyor belt in the conveyor belt class
+    '''
     
     
     def __init__(self,conveyor_stats):
@@ -123,7 +137,11 @@ class EnemyBlock(pygame.sprite.Sprite):
 
 
 class ConveyorBelt():
-    #TODO Get rid of setters if they are not doing any type of input validation. This is more pythonic
+    '''
+    Conveyor belt class holds all properties of the specific conveyor belt
+    Conveyor belt objects are stored in a list within the main function
+    '''
+    #TODO Get rid of setters if they are not doing any type of input validation.
     def __init__(self):
         #default values
         self.block_speed=1
@@ -249,7 +267,6 @@ def main():
         screen.fill((0,0,0),starting_zone_rect)
         #event loop
         for event in pygame.event.get():
-            
             if event.type == pygame.QUIT:
                 running = False
             elif event.type == pygame.KEYDOWN:
