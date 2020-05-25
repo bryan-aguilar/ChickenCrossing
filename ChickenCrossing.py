@@ -25,15 +25,14 @@ clock = pygame.time.Clock()
 screen = pygame.display.set_mode([SCREEN_WIDTH,SCREEN_HEIGHT])
 #arrow key list
 ARROW_KEYS = [K_DOWN,K_UP,K_LEFT,K_RIGHT]
-
-#position of first conveyor belt
-#FIRST_CONVEYOR_LINE = (0,200)
-FIRST_CONVEYOR_LINE = (0,int((SCREEN_HEIGHT/2)-((25*7)/2)))
-
-CONVEYOR_STARTING_X = 0
 #Starting location is drawn from the top down. So starting Y is the top most conveyor
-#CONVEYOR_STARTING_Y = 200
+#This centers the game on the screen
+#position of first conveyor belt
+#position is set for the center of the screen and subtracts half the size of 7 conveyor belts
+#TODO: Pass in NUM_CONV constant when it gets changed to global
+FIRST_CONVEYOR_LINE = (0,int((SCREEN_HEIGHT/2)-((25*7)/2)))
 CONVEYOR_STARTING_Y = int((SCREEN_HEIGHT/2)-((25*7)/2))
+CONVEYOR_STARTING_X = 0
 
 #our player class
 class Player(pygame.sprite.Sprite):
