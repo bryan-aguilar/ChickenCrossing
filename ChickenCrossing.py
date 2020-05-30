@@ -44,6 +44,7 @@ MOVEABLE_AREA_RECT_POS = (FIRST_CONVEYOR_LINE,(SCREEN_WIDTH,25*7))
 MOVEABLE_AREA_RECT = pygame.Rect(MOVEABLE_AREA_RECT_POS)
 
 
+
 class Player(pygame.sprite.Sprite):
     '''Player Class that controls movement'''
     #TODO:Fix location position be passed in and dynamic
@@ -55,21 +56,38 @@ class Player(pygame.sprite.Sprite):
                 left = FIRST_CONVEYOR_LINE[0],
                 top = FIRST_CONVEYOR_LINE[1]-25
             )
-    
+    def generateNewStartPos(self):
+        #Moves the player back to the top row in a random spot
+        #This will be called when a new level is generated
+        self.rect = self.surf.get_rect(
+            left = random.randint(0,SCREEN_WIDTH-25),
+            top = FIRST_CONVEYOR_LINE[1] -25
+        )
     def update(self,key_event):
         self.prev_location = self.rect.copy()
-        if key_event == K_UP:
-            self.rect.move_ip(0,-25)
-        elif key_event == K_DOWN:
-            self.rect.move_ip(0,25)
-        elif key_event == K_RIGHT:
-            self.rect.move_ip(25,0)
-        elif key_event == K_LEFT:
-            self.rect.move_ip(-25,0)
+        #we only want the player to be able to move down if he is at top row
+        #we only want the player to be abel to move right of left if on bottom row
+        if self.rect[1] == 75:
+            if key_event == K_DOWN:
+                self.rect.move_ip(0,25)
+        #elif self.rect[1]==250:
+            #if key_event == K_RIGHT:
+              #  self.rect.move_ip(25,0)
+            #elif key_event == K_LEFT:
+            #    self.rect.move_ip(-25,0)
+        else:
+            if key_event == K_UP:
+                self.rect.move_ip(0,-25)
+            elif key_event == K_DOWN:
+                self.rect.move_ip(0,25)
+            elif key_event == K_RIGHT:
+                self.rect.move_ip(25,0)
+            elif key_event == K_LEFT:
+                self.rect.move_ip(-25,0)
             
         #bounds checking
-        if not(MOVEABLE_AREA_RECT.contains(self.rect)):
-            self.rect = self.prev_location
+        #if not(MOVEABLE_AREA_RECT.contains(self.rect)):
+            #self.rect = self.prev_location
         if self.rect.left < 0:
             self.rect.left = 0
         if self.rect.right > SCREEN_WIDTH:
@@ -102,6 +120,7 @@ class FinishingArea(pygame.sprite.Sprite):
             top = self.top
         )
         self.surf.fill((0,255,0))
+        
 
     def getWidth(self,level_number):
         #Returns the width that the block should be
@@ -115,7 +134,7 @@ class FinishingArea(pygame.sprite.Sprite):
     def generateNewPos(self,level):
         #generate a new position and size
         #should be redrawn on screen after this is called
-        self.width(level)
+        self.width = self.getWidth(level)
         self.left = self.getLeftPos(self.width)
         self.rect = self.surf.get_rect(
             left = self.left,
@@ -293,11 +312,7 @@ def main():
         #Safe space is drawn on center of screen
         first_conv_rect = (FIRST_CONVEYOR_LINE,(SCREEN_WIDTH,25*num_conv))
         screen.fill((95,141,188),first_conv_rect)   
-        #draw starting and finishing area
-        starting_zone_rect = ((FIRST_CONVEYOR_LINE[0],FIRST_CONVEYOR_LINE[1]-25),(50,25))
-        #finishing_zone_rect = ((SCREEN_WIDTH-150,FIRST_CONVEYOR_LINE[1]+(25*7)),(100,25))
-        #creen.fill((0,0,0),finishing_zone_rect)
-        screen.fill((0,0,0),starting_zone_rect)
+        
         #event loop
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -327,11 +342,26 @@ def main():
             # If so, then remove the player and stop the loop
                 player.kill()
                 running = False
-        #elif pygame.sprite.collide_rect(player,finishing_zone_sprite):
-            #if our player collides with the finishing zone
-            #This could check for clipping not complete inclusion
-            #level_counter += 1
-
+        elif pygame.sprite.collide_rect(player,finishing_zone_sprite):
+            '''if our player collides with the finishing zone
+            This could check for clipping not complete inclusion
+            What needs to happen when he hits zone:
+            -check to see if max level
+            -level counter increments
+            -player position is changed back/new one chosen
+            -generate new finishing zone
+            -change speeds on conveyors(maybe reinit?)
+            '''
+            if level_counter < 5:
+                level_counter += 1
+                finishing_zone_sprite.generateNewPos(level_counter)
+                player.generateNewStartPos()
+        elif player.rect[1] == 275:
+            player.kill()
+            running = False
+            #else
+                #END GAME
+        print(player.rect[1])
         pygame.display.flip()
         
         clock.tick(30)
