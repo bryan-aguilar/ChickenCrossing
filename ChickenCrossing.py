@@ -212,6 +212,24 @@ class ConveyorBelt():
     def setBlockWidth(self,w):
         self.block_width = w
 
+    def generateNewLevelStats(self,level):
+        '''Things that need to be generated with each new level
+        Speed, width, timing,'''
+        self.block_width = random.randint(25,150)
+        #can we use the level as a modifier for each stat? 
+        if level == 2:
+            self.timing = random.randint(1000,6000)
+        if level == 3:
+            self.timing = random.randint(1000,5000)
+            self.speed = random.randint(10,20)
+        if level == 4:
+            self.timing = random.randint(1000,4000)
+            self.speed = random.randint(15,20)
+        if level == 5:
+            self.timing = random.randint(1000,3000)
+            self.speed = random.randint(15,25)
+            
+
 
 def create_conv_list(num,cl):
     for i in range(num):
@@ -345,6 +363,11 @@ def main():
                 finishing_zone_sprite.generateNewPos(level_counter)
                 player.generateNewStartPos()
                 #TODO: Generate new conveyor stats
+                #killl all the conveyor sprites
+                for conveyor_sprites in conveyor_blocks:
+                    conveyor_sprites.kill()
+                for c in conv_list:
+                    c.generateNewLevelStats(level_counter)
             #else
                 #END GAME
         elif player.rect[1] == 275:
@@ -352,7 +375,7 @@ def main():
             player.kill()
             running = False
             
-        print(player.rect[1])
+       
         pygame.display.flip()
         
         clock.tick(30)
