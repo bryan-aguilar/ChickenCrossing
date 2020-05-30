@@ -47,10 +47,11 @@ class Player(pygame.sprite.Sprite):
         super(Player,self).__init__()
         self.surf = pygame.Surface(PLAYER_SIZE)
         self.surf.fill((255,255,0))
-        self.rect = self.surf.get_rect(
-                left = FIRST_CONVEYOR_LINE[0],
-                top = FIRST_CONVEYOR_LINE[1]-25
-            )
+        #self.rect = self.surf.get_rect(
+        #        left = FIRST_CONVEYOR_LINE[0],
+        #        top = FIRST_CONVEYOR_LINE[1]-25
+        #    )
+        self.generateNewStartPos()
     def generateNewStartPos(self):
         #Moves the player back to the top row in a random spot
         #This will be called when a new level is generated
@@ -362,7 +363,6 @@ def main():
                 level_counter += 1
                 finishing_zone_sprite.generateNewPos(level_counter)
                 player.generateNewStartPos()
-                #TODO: Generate new conveyor stats
                 #killl all the conveyor sprites
                 for conveyor_sprites in conveyor_blocks:
                     conveyor_sprites.kill()
