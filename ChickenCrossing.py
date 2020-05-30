@@ -47,11 +47,8 @@ class Player(pygame.sprite.Sprite):
         super(Player,self).__init__()
         self.surf = pygame.Surface(PLAYER_SIZE)
         self.surf.fill((255,255,0))
-        #self.rect = self.surf.get_rect(
-        #        left = FIRST_CONVEYOR_LINE[0],
-        #        top = FIRST_CONVEYOR_LINE[1]-25
-        #    )
         self.generateNewStartPos()
+
     def generateNewStartPos(self):
         #Moves the player back to the top row in a random spot
         #This will be called when a new level is generated
@@ -216,8 +213,9 @@ class ConveyorBelt():
     def generateNewLevelStats(self,level):
         '''Things that need to be generated with each new level
         Speed, width, timing,'''
+        #block width should be randomized every level
         self.block_width = random.randint(25,150)
-        #can we use the level as a modifier for each stat? 
+        #level adjustments are hard coded for each level 
         if level == 2:
             self.timing = random.randint(1000,6000)
         if level == 3:
@@ -238,6 +236,7 @@ def create_conv_list(num,cl):
 
 def initConveyors(conveyor_list):
     #this funciton populates our conveyor object attributes
+    #TODO Should this be contained in the conveyor class?
     direction = 1
     x = CONVEYOR_STARTING_X
     y = CONVEYOR_STARTING_Y
@@ -310,7 +309,7 @@ def main():
 
    
    
-    #test comment
+    
     while running:
         #background color
         screen.fill((255,255,255))
@@ -363,7 +362,7 @@ def main():
                 level_counter += 1
                 finishing_zone_sprite.generateNewPos(level_counter)
                 player.generateNewStartPos()
-                #killl all the conveyor sprites
+                #killl all the conveyor sprites b/c new level is starting
                 for conveyor_sprites in conveyor_blocks:
                     conveyor_sprites.kill()
                 for c in conv_list:
