@@ -47,7 +47,7 @@ MOVEABLE_AREA_RECT = pygame.Rect(MOVEABLE_AREA_RECT_POS)
 
 class Player(pygame.sprite.Sprite):
     '''Player Class that controls movement'''
-    #TODO:Fix location positiont be passed in and dynamic
+    #TODO:Fix location position be passed in and dynamic
     def __init__(self):
         super(Player,self).__init__()
         self.surf = pygame.Surface(PLAYER_SIZE)
@@ -88,9 +88,31 @@ class FinishingArea(pygame.sprite.Sprite):
     can be updated for each level. 
     '''
     #TODO:Build out class
-    def __init__(self):
+    #Location should be random
+    #Size(width) should decrement(?) based on level
+    #should have a function to generage a new position
+    def __init__(self,level_number):
         super(FinishingArea,self).__init__()
-            
+        self.width = getWidth(level_number)
+        self.surf = pygame.Surface((self.width,25))
+        #positional arguments for rect
+        self.top = FIRST_CONVEYOR_LINE[1]+(25*7)
+        self.left = getLeftPos(self.width)
+        self.rect = self.surf.get_rect(
+            left = self.left,
+            top = self.top
+        )
+        #self.surf.fill()
+
+    def getWidth(self,level_number):
+        #Returns the width that the block should be
+        #Width values are stored in a fixed list
+        level_width_sizes = [100,100,75,50,25]
+        return level_width_sizes[level_number-1]
+    def getLeftPos(self,zone_width):
+        #returns a random position for the finishing zone to be.
+        return random.randint(0,(SCREEN_WIDTH-zone_width))
+
         
 
 class EnemyBlock(pygame.sprite.Sprite):
@@ -262,7 +284,7 @@ def main():
         screen.fill((95,141,188),first_conv_rect)   
         #draw starting and finishing area
         starting_zone_rect = ((FIRST_CONVEYOR_LINE[0],FIRST_CONVEYOR_LINE[1]-25),(50,25))
-        finishing_zone_rect = ((SCREEN_WIDTH-50,FIRST_CONVEYOR_LINE[1]+(25*7)),(50,25))
+        finishing_zone_rect = ((SCREEN_WIDTH-150,FIRST_CONVEYOR_LINE[1]+(25*7)),(100,25))
         screen.fill((0,0,0),finishing_zone_rect)
         screen.fill((0,0,0),starting_zone_rect)
         #event loop
