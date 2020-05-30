@@ -44,7 +44,6 @@ MOVEABLE_AREA_RECT_POS = (FIRST_CONVEYOR_LINE,(SCREEN_WIDTH,25*7))
 MOVEABLE_AREA_RECT = pygame.Rect(MOVEABLE_AREA_RECT_POS)
 
 
-
 class Player(pygame.sprite.Sprite):
     '''Player Class that controls movement'''
     #TODO:Fix location position be passed in and dynamic
@@ -87,22 +86,22 @@ class FinishingArea(pygame.sprite.Sprite):
     I believe only one of these sprites will be neccesary and the location
     can be updated for each level. 
     '''
-    #TODO:Build out class
     #Location should be random
     #Size(width) should decrement(?) based on level
-    #should have a function to generage a new position
+    #should have a function to generate a new position
     def __init__(self,level_number):
         super(FinishingArea,self).__init__()
-        self.width = getWidth(level_number)
+        self.width = self.getWidth(level_number)
         self.surf = pygame.Surface((self.width,25))
         #positional arguments for rect
         self.top = FIRST_CONVEYOR_LINE[1]+(25*7)
-        self.left = getLeftPos(self.width)
+        self.left = self.getLeftPos(self.width)
+        #put our surface rect in the correct position
         self.rect = self.surf.get_rect(
             left = self.left,
             top = self.top
         )
-        #self.surf.fill()
+        self.surf.fill((0,255,0))
 
     def getWidth(self,level_number):
         #Returns the width that the block should be
@@ -113,6 +112,15 @@ class FinishingArea(pygame.sprite.Sprite):
         #returns a random position for the finishing zone to be.
         return random.randint(0,(SCREEN_WIDTH-zone_width))
 
+    def generateNewPos(self,level):
+        #generate a new position and size
+        #should be redrawn on screen after this is called
+        self.width(level)
+        self.left = self.getLeftPos(self.width)
+        self.rect = self.surf.get_rect(
+            left = self.left,
+            top = self.top
+        )
         
 
 class EnemyBlock(pygame.sprite.Sprite):
@@ -241,7 +249,8 @@ def main_menu():
     
 
 def main():
-
+    #level counter
+    level_counter = 1
     #determine how many lines
     #TODO: Make this a global constant since it will be fixed. Will need to subsequently 
     #change all future function calls because this can be accessed globally
@@ -263,15 +272,17 @@ def main():
 
     #create our player
     player = Player()
-
+    #create our finishing zone
+    finishing_zone_sprite = FinishingArea(level_counter)
     #sprite groups
     all_sprites = pygame.sprite.Group()
     conveyor_blocks = pygame.sprite.Group()
     all_sprites.add(player)
+    all_sprites.add(finishing_zone_sprite)
 
     running = True
 
-    #conveyor belt background
+   
   
     
     while running:
@@ -284,8 +295,8 @@ def main():
         screen.fill((95,141,188),first_conv_rect)   
         #draw starting and finishing area
         starting_zone_rect = ((FIRST_CONVEYOR_LINE[0],FIRST_CONVEYOR_LINE[1]-25),(50,25))
-        finishing_zone_rect = ((SCREEN_WIDTH-150,FIRST_CONVEYOR_LINE[1]+(25*7)),(100,25))
-        screen.fill((0,0,0),finishing_zone_rect)
+        #finishing_zone_rect = ((SCREEN_WIDTH-150,FIRST_CONVEYOR_LINE[1]+(25*7)),(100,25))
+        #creen.fill((0,0,0),finishing_zone_rect)
         screen.fill((0,0,0),starting_zone_rect)
         #event loop
         for event in pygame.event.get():
@@ -316,6 +327,10 @@ def main():
             # If so, then remove the player and stop the loop
                 player.kill()
                 running = False
+        #elif pygame.sprite.collide_rect(player,finishing_zone_sprite):
+            #if our player collides with the finishing zone
+            #This could check for clipping not complete inclusion
+            #level_counter += 1
 
         pygame.display.flip()
         
