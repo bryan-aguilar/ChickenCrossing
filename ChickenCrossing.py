@@ -37,11 +37,6 @@ FIRST_CONVEYOR_LINE = (0,round(int((SCREEN_HEIGHT/2)-((25*7)/2))/25)*25)
 CONVEYOR_STARTING_Y = round(int((SCREEN_HEIGHT/2)-((25*7)/2))/25)*25
 CONVEYOR_STARTING_X = 0
 
-#This should be the only location that our player can move
-#TODO:Need to figure out a way to make safe space included. Or just
-#make starting positions a single spot
-MOVEABLE_AREA_RECT_POS = (FIRST_CONVEYOR_LINE,(SCREEN_WIDTH,25*7))
-MOVEABLE_AREA_RECT = pygame.Rect(MOVEABLE_AREA_RECT_POS)
 
 
 
@@ -66,15 +61,10 @@ class Player(pygame.sprite.Sprite):
     def update(self,key_event):
         self.prev_location = self.rect.copy()
         #we only want the player to be able to move down if he is at top row
-        #we only want the player to be abel to move right of left if on bottom row
+        
         if self.rect[1] == 75:
             if key_event == K_DOWN:
                 self.rect.move_ip(0,25)
-        #elif self.rect[1]==250:
-            #if key_event == K_RIGHT:
-              #  self.rect.move_ip(25,0)
-            #elif key_event == K_LEFT:
-            #    self.rect.move_ip(-25,0)
         else:
             if key_event == K_UP:
                 self.rect.move_ip(0,-25)
@@ -86,8 +76,6 @@ class Player(pygame.sprite.Sprite):
                 self.rect.move_ip(-25,0)
             
         #bounds checking
-        #if not(MOVEABLE_AREA_RECT.contains(self.rect)):
-            #self.rect = self.prev_location
         if self.rect.left < 0:
             self.rect.left = 0
         if self.rect.right > SCREEN_WIDTH:
@@ -356,11 +344,14 @@ def main():
                 level_counter += 1
                 finishing_zone_sprite.generateNewPos(level_counter)
                 player.generateNewStartPos()
-        elif player.rect[1] == 275:
-            player.kill()
-            running = False
+                #TODO: Generate new conveyor stats
             #else
                 #END GAME
+        elif player.rect[1] == 275:
+            #Player will die if they move below the safe space
+            player.kill()
+            running = False
+            
         print(player.rect[1])
         pygame.display.flip()
         
