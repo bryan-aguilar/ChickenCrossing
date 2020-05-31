@@ -121,6 +121,7 @@ class FinishingArea(pygame.sprite.Sprite):
         #generate a new position and size
         #should be redrawn on screen after this is called
         self.width = self.getWidth(level)
+        #FIXME Fix width. need to edit surface
         self.left = self.getLeftPos(self.width)
         self.rect = self.surf.get_rect(
             left = self.left,
@@ -184,7 +185,7 @@ class ConveyorBelt():
         self.direction = 1
         #block size?
         #may not be needed here
-        block_width = 25
+        self.block_width = 25
         #how often blocks are made on belt
         self.timing = 3000
 
@@ -261,8 +262,6 @@ def createCustomEvents(e_list,num):
     #create custom events for our conveyor lines
     #our e_list[0] will refer to first conveyor line
     #e_list[1] will refer to second conveyor line
-    #FIXME Custom user events can only go from 25-32 because anything more will cause timing issues.
-    #TODO Maybe need to re-evaluate how custom events are handled 
     for i in range(num):
         e_list.append(pygame.USEREVENT + (i+1))
 
@@ -272,6 +271,10 @@ def main_menu():
     menu.add_button("Quit",pygame_menu.events.EXIT)
     menu.mainloop(screen)
     
+def centerScreenTimer(txt_size):
+    #returns the coordinates for the center of the screen for our counter
+    center_tuple = (int((SCREEN_WIDTH/2)-(txt_size[0]/2)),int((SCREEN_HEIGHT/2)-(txt_size[1]/2)))
+    return center_tuple
 
 def main():
     #level counter
@@ -308,34 +311,36 @@ def main():
 
     running = True
 
-    #This will be used for our timer that starts on the first level
-    timer = 5
+    #This will be used for our timer that starts on every level
+    timer = 6
     dt = 0
-    font = pygame.font.Font(None,40)
-    blue = pygame.Color('dodgerblue')
+    font = pygame.font.Font(None,150)
+    blue = pygame.Color('black')
+    gray = pygame.Color('gray19')
    
     
     while running:
         #background color
-        screen.fill((255,255,255))
+        screen.fill(gray)
         #draw safe space
         #TODO: Consolidate into function
         #Safe space is drawn on center of screen
         first_conv_rect = (FIRST_CONVEYOR_LINE,(SCREEN_WIDTH,25*num_conv))
-        screen.fill((95,141,188),first_conv_rect)   
+        screen.fill((95,141,188),first_conv_rect)
+        
+       
         
         #event loop
         timer -= dt
        
-            #don't accept any keyboard inputs while the timer is counting down but we still
-            #need to render and move all the blocks
-           
+        #don't accept any keyboard inputs while the timer is counting down but we still
+        #need to render and move all the blocks  
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
             elif event.type == pygame.KEYDOWN:
                 #check if it was an arrow key. these are the only ones we want to pass to our player
-                if timer <=0:
+                if timer <= 0:
                     if event.key in ARROW_KEYS:
                         player.update(event.key)
             #Checks if the event is a custom event
@@ -356,8 +361,8 @@ def main():
             screen.blit(entity.surf,entity.rect)
         #draw timer
         if timer>=0:
-            txt = font.render(str(round(timer, 2)), True, blue)
-            screen.blit(txt, (70, 70))
+            txt = font.render(str(int(timer)), True, blue)
+            screen.blit(txt, centerScreenTimer(font.size(str(int(timer)))))
         #collision check
         if pygame.sprite.spritecollideany(player, conveyor_blocks):
             # If so, then remove the player and stop the loop
