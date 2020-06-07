@@ -123,7 +123,6 @@ class FinishingArea(pygame.sprite.Sprite):
         self.width = self.getWidth(level)
         self.surf = pygame.Surface((self.width,25))
         self.surf.fill((0,255,0))
-        #FIXME Fix width. need to edit surface
         self.left = self.getLeftPos(self.width)
         self.rect = self.surf.get_rect(
             left = self.left,
@@ -136,9 +135,7 @@ class EnemyBlock(pygame.sprite.Sprite):
     The only values it holds is the size and speed at which it moves
     Currently the size is fixed at 25 units high and the width is passed in
     Width is stored individually for each conveyor belt in the conveyor belt class
-    '''
-    
-    
+    ''' 
     def __init__(self,conveyor_stats):
         super(EnemyBlock,self).__init__()
         self.surf = pygame.Surface((conveyor_stats.block_width,25))
@@ -367,7 +364,7 @@ def main():
             txt = font.render(str(int(timer)), True, blue)
             screen.blit(txt, centerScreenTimer(font.size(str(int(timer)))))
         #collision check
-        if pygame.sprite.spritecollideany(player, conveyor_blocks):
+        if pygame.sprite.spritecollideany(player, conveyor_blocks) or player.rect[1] == 275 :
             # If so, then remove the player and stop the loop
                 player.kill()
                 running = False
@@ -393,11 +390,8 @@ def main():
                 #reset timer
                 timer = 5
             #else
-                #END GAME
-        elif player.rect[1] == 275:
-            #Player will die if they move below the safe space
-            player.kill()
-            running = False
+                #END GAME/Winner
+        
             
        
         pygame.display.flip()
