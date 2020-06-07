@@ -48,6 +48,7 @@ class Player(pygame.sprite.Sprite):
         self.surf = pygame.Surface(PLAYER_SIZE)
         self.surf.fill((255,255,0))
         self.generateNewStartPos()
+        #self.prev_location = self.rect.copy()
 
     def generateNewStartPos(self):
         #Moves the player back to the top row in a random spot
@@ -56,6 +57,10 @@ class Player(pygame.sprite.Sprite):
             left = random.randint(0,SCREEN_WIDTH-25),
             top = FIRST_CONVEYOR_LINE[1] -25
         )
+        #self.prev_location = self.rect.copy()
+    def resetPos(self):
+        self.rect = self.prev_location
+
     def update(self,key_event):
         self.prev_location = self.rect.copy()
         #we only want the player to be able to move down if he is at top row
@@ -236,7 +241,8 @@ def create_conv_list(num,cl):
 
 def initConveyors(conveyor_list):
     #this funciton populates our conveyor object attributes
-    #TODO Should this be contained in the conveyor class?
+    #TODO Should this be contained in the conveyor class? 
+    #this could all probably be a part of the object init
     direction = 1
     x = CONVEYOR_STARTING_X
     y = CONVEYOR_STARTING_Y
@@ -248,7 +254,7 @@ def initConveyors(conveyor_list):
         c.setDirection(direction)
         direction *= -1
         #set block speed
-        rand_speed = random.randint(5,15)
+        rand_speed = random.randint(5,10)
         c.setBlockSpeed(rand_speed)
         #set timing
        
@@ -278,6 +284,8 @@ def centerScreenTimer(txt_size):
 def main():
     #level counter
     level_counter = 1
+    #player lives
+    player_lives_left = 3
     #determine how many lines
     #TODO: Make this a global constant since it will be fixed. Will need to subsequently 
     #change all future function calls because this can be accessed globally
@@ -364,11 +372,8 @@ def main():
             txt = font.render(str(int(timer)), True, blue)
             screen.blit(txt, centerScreenTimer(font.size(str(int(timer)))))
         #collision check
-        if pygame.sprite.spritecollideany(player, conveyor_blocks) or player.rect[1] == 275 :
-            # If so, then remove the player and stop the loop
-                player.kill()
-                running = False
-        elif pygame.sprite.collide_rect(player,finishing_zone_sprite):
+        
+        if pygame.sprite.collide_rect(player,finishing_zone_sprite):
             '''if our player collides with the finishing zone
             This could check for clipping not complete inclusion
             What needs to happen when he hits zone:
@@ -391,7 +396,13 @@ def main():
                 timer = 5
             #else
                 #END GAME/Winner
-        
+        elif pygame.sprite.spritecollideany(player, conveyor_blocks) or player.rect[1] == 275 :
+                #player_lives_left -= 1
+              
+                player.kill()
+                running = False
+                #else:
+                    #player.resetPos()
             
        
         pygame.display.flip()
