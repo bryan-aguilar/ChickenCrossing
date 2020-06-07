@@ -248,7 +248,7 @@ def initConveyors(conveyor_list):
         c.setDirection(direction)
         direction *= -1
         #set block speed
-        rand_speed = random.randint(5,20)
+        rand_speed = random.randint(5,15)
         c.setBlockSpeed(rand_speed)
         #set timing
        
