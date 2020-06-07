@@ -327,14 +327,14 @@ def main():
     #This will be used for our timer that starts on every level
     timer = 6
     dt = 0
-    font = pygame.font.Font(None,150)
-    blue = pygame.Color('black')
-    gray = pygame.Color('gray19')
+    timer_font = pygame.font.Font(None,150)
+    blue_font_color = pygame.Color('black')
+    grey_font_color = pygame.Color('gray19')
    
     
     while running:
         #background color
-        screen.fill(gray)
+        screen.fill(grey_font_color)
         #draw safe space
         #TODO: Consolidate into function
         #Safe space is drawn on center of screen
@@ -375,8 +375,8 @@ def main():
             screen.blit(entity.surf,entity.rect)
         #draw timer
         if timer>=0:
-            txt = font.render(str(int(timer)), True, blue)
-            screen.blit(txt, centerScreenTimer(font.size(str(int(timer)))))
+            txt = timer_font.render(str(int(timer)), True, blue_font_color)
+            screen.blit(txt, centerScreenTimer(timer_font.size(str(int(timer)))))
         #collision check
         
         if pygame.sprite.collide_rect(player,finishing_zone_sprite):
@@ -388,9 +388,11 @@ def main():
             -player position is changed back/new one chosen
             -generate new finishing zone
             -change speeds on conveyors(maybe reinit?)
+            -give player extra life
             '''
             if level_counter < 5:
                 level_counter += 1
+                player_lives_left += 1
                 finishing_zone_sprite.generateNewPos(level_counter)
                 player.generateNewStartPos()
                 #killl all the conveyor sprites b/c new level is starting
@@ -402,16 +404,14 @@ def main():
                 timer = 5
             #else
                 #END GAME/Winner
-        elif pygame.sprite.spritecollideany(player, conveyor_blocks) or player.rect[1] == 275 :
-                #player.kill()
+        elif pygame.sprite.spritecollideany(player, conveyor_blocks) or player.rect[1] == 275 :     
+                #Decrement lives and then reset back to start if player has lives left   
                 player_lives_left -= 1
-                print(player_lives_left)
                 if player_lives_left == -1:
                     player.kill()
                     running = False
                 else:
                     player.resetPos()
-                    #all_sprites.add(player)
               
             
        
@@ -423,5 +423,5 @@ def main():
 
 
 
-#main_menu()
+main_menu()
 main()
