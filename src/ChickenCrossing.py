@@ -325,11 +325,14 @@ def main():
     running = True
 
     #This will be used for our timer that starts on every level
-    timer = 6
+    countdown_timer = 6
     dt = 0
     timer_font = pygame.font.Font(None,150)
+    info_bar_font = pygame.font.Font(None,50)
     blue_font_color = pygame.Color('black')
     grey_font_color = pygame.Color('gray19')
+    white_font_color = pygame.Color('white')
+
    
     
     while running:
@@ -344,7 +347,7 @@ def main():
        
         
         #subtract our delta time from our timer
-        timer -= dt
+        countdown_timer -= dt
 
         #event loop
         #don't accept any keyboard inputs while the timer is counting down but we still
@@ -354,7 +357,8 @@ def main():
                 running = False
             elif event.type == pygame.KEYDOWN:
                 #check if it was an arrow key. these are the only ones we want to pass to our player
-                if timer <= 0:
+                #only accept inputs if we are not counting down with the timer
+                if countdown_timer <= 0:
                     if event.key in ARROW_KEYS:
                         player.update(event.key)
             #Checks if the event is a custom event
@@ -374,9 +378,9 @@ def main():
         for entity in all_sprites:
             screen.blit(entity.surf,entity.rect)
         #draw timer
-        if timer>=0:
-            txt = timer_font.render(str(int(timer)), True, blue_font_color)
-            screen.blit(txt, centerScreenTimer(timer_font.size(str(int(timer)))))
+        if countdown_timer>=0:
+            txt = timer_font.render(str(int(countdown_timer)), True, blue_font_color)
+            screen.blit(txt, centerScreenTimer(timer_font.size(str(int(countdown_timer)))))
         #collision check
         
         if pygame.sprite.collide_rect(player,finishing_zone_sprite):
@@ -401,7 +405,7 @@ def main():
                 for c in conv_list:
                     c.generateNewLevelStats(level_counter)
                 #reset timer
-                timer = 5
+                countdown_timer = 5
             #else
                 #END GAME/Winner
         elif pygame.sprite.spritecollideany(player, conveyor_blocks) or player.rect[1] == 275 :     
@@ -416,7 +420,7 @@ def main():
             
        
         pygame.display.flip()
-        dt = clock.tick(30) / 1000
+        dt = clock.tick(60) / 1000
         #clock.tick(30)
 
     pygame.quit()
