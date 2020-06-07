@@ -121,6 +121,8 @@ class FinishingArea(pygame.sprite.Sprite):
         #generate a new position and size
         #should be redrawn on screen after this is called
         self.width = self.getWidth(level)
+        self.surf = pygame.Surface((self.width,25))
+        self.surf.fill((0,255,0))
         #FIXME Fix width. need to edit surface
         self.left = self.getLeftPos(self.width)
         self.rect = self.surf.get_rect(
@@ -269,7 +271,7 @@ def main_menu():
     menu = pygame_menu.Menu(SCREEN_HEIGHT,SCREEN_WIDTH, 'Chicken Crossing',theme=pygame_menu.themes.THEME_BLUE)
     menu.add_button("Play",main)
     menu.add_button("Quit",pygame_menu.events.EXIT)
-    menu.mainloop(screen)
+    menu.mainloop(screen)  
     
 def centerScreenTimer(txt_size):
     #returns the coordinates for the center of the screen for our counter
@@ -330,9 +332,10 @@ def main():
         
        
         
-        #event loop
+        #subtract our delta time from our timer
         timer -= dt
-       
+
+        #event loop
         #don't accept any keyboard inputs while the timer is counting down but we still
         #need to render and move all the blocks  
         for event in pygame.event.get():
@@ -354,9 +357,9 @@ def main():
 
         #update all of our auto update
         conveyor_blocks.update()
+        #TODO: Level/Timer/Lives Bar
 
-        #draw sprites
-        
+        #draw sprites 
         for entity in all_sprites:
             screen.blit(entity.surf,entity.rect)
         #draw timer
