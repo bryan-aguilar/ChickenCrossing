@@ -47,22 +47,28 @@ class Player(pygame.sprite.Sprite):
         super(Player,self).__init__()
         self.surf = pygame.Surface(PLAYER_SIZE)
         self.surf.fill((255,255,0))
+        self.left = 1
+        self.top = FIRST_CONVEYOR_LINE[1] -25
         self.generateNewStartPos()
-        #self.prev_location = self.rect.copy()
+        
+        
 
     def generateNewStartPos(self):
         #Moves the player back to the top row in a random spot
         #This will be called when a new level is generated
+        self.left = random.randint(0,SCREEN_WIDTH-25)
         self.rect = self.surf.get_rect(
-            left = random.randint(0,SCREEN_WIDTH-25),
-            top = FIRST_CONVEYOR_LINE[1] -25
+            left = self.left,
+            top = self.top
         )
-        #self.prev_location = self.rect.copy()
+        
     def resetPos(self):
-        self.rect = self.prev_location
+        self.rect = self.surf.get_rect(
+            left = self.left,
+            top = self.top
+        )
 
     def update(self,key_event):
-        self.prev_location = self.rect.copy()
         #we only want the player to be able to move down if he is at top row
         
         if self.rect[1] == 75:
@@ -397,12 +403,16 @@ def main():
             #else
                 #END GAME/Winner
         elif pygame.sprite.spritecollideany(player, conveyor_blocks) or player.rect[1] == 275 :
-                #player_lives_left -= 1
+                #player.kill()
+                player_lives_left -= 1
+                print(player_lives_left)
+                if player_lives_left == -1:
+                    player.kill()
+                    running = False
+                else:
+                    player.resetPos()
+                    #all_sprites.add(player)
               
-                player.kill()
-                running = False
-                #else:
-                    #player.resetPos()
             
        
         pygame.display.flip()
