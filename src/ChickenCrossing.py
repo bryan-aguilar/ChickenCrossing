@@ -327,8 +327,9 @@ def main():
     #This will be used for our timer that starts on every level
     countdown_timer = 6
     dt = 0
+    #Font Attriubtes
     timer_font = pygame.font.Font(None,150)
-    info_bar_font = pygame.font.Font(None,50)
+    infobar_font = pygame.font.Font(None,25)
     blue_font_color = pygame.Color('black')
     grey_font_color = pygame.Color('gray19')
     white_font_color = pygame.Color('white')
@@ -373,14 +374,20 @@ def main():
         #update all of our auto update
         conveyor_blocks.update()
         #TODO: Level/Timer/Lives Bar
-
+        #draw our information at the top
+        lives_txt = infobar_font.render("Lives Left: " + str(player_lives_left),True,white_font_color)
+        level_txt = infobar_font.render("Level: " + str(level_counter),True, white_font_color)
+        #used for centering calculation
+        level_txt_size = infobar_font.size("Level: " + str(level_counter))
+        screen.blit(level_txt,(int(SCREEN_WIDTH/2 - (level_txt_size[0]/2)),0))
+        screen.blit(lives_txt,(0,0))
         #draw sprites 
         for entity in all_sprites:
             screen.blit(entity.surf,entity.rect)
         #draw timer
         if countdown_timer>=0:
-            txt = timer_font.render(str(int(countdown_timer)), True, blue_font_color)
-            screen.blit(txt, centerScreenTimer(timer_font.size(str(int(countdown_timer)))))
+            countdown_txt = timer_font.render(str(int(countdown_timer)), True, blue_font_color)
+            screen.blit(countdown_txt, centerScreenTimer(timer_font.size(str(int(countdown_timer)))))
         #collision check
         
         if pygame.sprite.collide_rect(player,finishing_zone_sprite):
@@ -420,7 +427,7 @@ def main():
             
        
         pygame.display.flip()
-        dt = clock.tick(60) / 1000
+        dt = clock.tick(30) / 1000
         #clock.tick(30)
 
     pygame.quit()
