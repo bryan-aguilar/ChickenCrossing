@@ -377,8 +377,7 @@ def main():
 
         #update all of our auto update
         conveyor_blocks.update()
-        
-        #TODO: Score Timer
+        #TODO: Level/Timer/Lives Bar
         #draw our information at the top
         game_timer_txt = infobar_font.render("Time: " + str(round(game_timer,1)),True,white_font_color)
         lives_txt = infobar_font.render("Lives Left: " + str(player_lives_left),True,white_font_color)
