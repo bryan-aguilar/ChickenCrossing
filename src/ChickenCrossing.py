@@ -361,7 +361,7 @@ def main():
                 running = False
             elif event.type == pygame.KEYDOWN:
                 #check if it was an arrow key. these are the only ones we want to pass to our player
-                if timer <= 0:
+                if countdown_timer <= 0:
                     if event.key in ARROW_KEYS:
                         player.update(event.key)
             #Checks if the event is a custom event
