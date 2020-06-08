@@ -96,7 +96,7 @@ class Player(pygame.sprite.Sprite):
 
 class FinishingArea(pygame.sprite.Sprite):
     '''This will hold our finishing area. Finishing area will be randomly
-    selected for each new level. The widelta_timeh will also change depending on the level.
+    selected for each new level. The width will also change depending on the level.
     Starter levels will have wider finishing areas and narrow as levels increase.
     I believe only one of these sprites will be neccesary and the location
     can be updated for each level. 
@@ -106,11 +106,11 @@ class FinishingArea(pygame.sprite.Sprite):
     #should have a function to generate a new position
     def __init__(self,level_number):
         super(FinishingArea,self).__init__()
-        self.widelta_timeh = self.getWidth(level_number)
-        self.surf = pygame.Surface((self.widelta_timeh,25))
+        self.width = self.getWidth(level_number)
+        self.surf = pygame.Surface((self.width,25))
         #positional arguments for rect
         self.top = FIRST_CONVEYOR_LINE[1]+(25*7)
-        self.left = self.getLeftPos(self.widelta_timeh)
+        self.left = self.getLeftPos(self.width)
         #put our surface rect in the correct position
         self.rect = self.surf.get_rect(
             left = self.left,
@@ -120,21 +120,21 @@ class FinishingArea(pygame.sprite.Sprite):
         
 
     def getWidth(self,level_number):
-        #Returns the widelta_timeh that the block should be
-        #Widelta_timeh values are stored in a fixed list
-        level_widelta_timeh_sizes = [100,100,75,50,25]
-        return level_widelta_timeh_sizes[level_number-1]
-    def getLeftPos(self,zone_widelta_timeh):
+        #Returns the width that the block should be
+        #width values are stored in a fixed list
+        level_width_sizes = [100,100,75,50,25]
+        return level_width_sizes[level_number-1]
+    def getLeftPos(self,zone_width):
         #returns a random position for the finishing zone to be.
-        return random.randint(0,(SCREEN_WIDTH-zone_widelta_timeh))
+        return random.randint(0,(SCREEN_WIDTH-zone_width))
 
     def generateNewPos(self,level):
         #generate a new position and size
         #should be redrawn on screen after this is called
-        self.widelta_timeh = self.getWidth(level)
-        self.surf = pygame.Surface((self.widelta_timeh,25))
+        self.width = self.getWidth(level)
+        self.surf = pygame.Surface((self.width,25))
         self.surf.fill((0,255,0))
-        self.left = self.getLeftPos(self.widelta_timeh)
+        self.left = self.getLeftPos(self.width)
         self.rect = self.surf.get_rect(
             left = self.left,
             top = self.top
@@ -144,8 +144,8 @@ class FinishingArea(pygame.sprite.Sprite):
 class EnemyBlock(pygame.sprite.Sprite):
     '''This is our enemy block class
     The only values it holds is the size and speed at which it moves
-    Currently the size is fixed at 25 units high and the widelta_timeh is passed in
-    Widelta_timeh is stored individually for each conveyor belt in the conveyor belt class
+    Currently the size is fixed at 25 units high and the width is passed in
+    width is stored individually for each conveyor belt in the conveyor belt class
     ''' 
     def __init__(self,conveyor_stats):
         super(EnemyBlock,self).__init__()
@@ -218,13 +218,13 @@ class ConveyorBelt():
     def setLocation(self,x,y):
         self.location = (x,y)
     
-    def setBlockWidelta_timeh(self,w):
+    def setBlockWidth(self,w):
         self.block_width = w
 
     def generateNewLevelStats(self,level):
         '''Things that need to be generated with each new level
-        Speed, widelta_timeh, timing,'''
-        #block widelta_timeh should be randomized every level
+        Speed, width, timing,'''
+        #block width should be randomized every level
         self.block_width = random.randint(25,150)
         #level adjustments are hard coded for each level 
         if level == 2:
@@ -265,9 +265,9 @@ def initConveyors(conveyor_list):
         #set timing
        
         c.setTiming(random.randint(1000,6000))
-        #set block widelta_timeh
+        #set block width
         w = random.randint(25,150)
-        c.setBlockWidelta_timeh(w)
+        c.setBlockWidth(w)
 
 def createCustomEvents(e_list,num):
     #create custom events for our conveyor lines
@@ -324,7 +324,6 @@ def main():
 
     running = True
 
-<<<<<<< HEAD
     #This will be used for our timers 
     countdown_timer = 6
     delta_time = 0
@@ -332,14 +331,9 @@ def main():
     #Font Attriubtes
     timer_font = pygame.font.Font(None,150)
     infobar_font = pygame.font.Font(None,25)
-=======
-    #This will be used for our timer that starts on every level
-    timer = 6
-    dt = 0
-    timer_font = pygame.font.Font(None,150)
->>>>>>> parent of b7524e0... changed timer var name
     blue_font_color = pygame.Color('black')
     grey_font_color = pygame.Color('gray19')
+    white_font_color = pygame.Color('white')
    
     
     while running:
@@ -354,14 +348,10 @@ def main():
        
         
         #subtract our delta time from our timer
-<<<<<<< HEAD
         countdown_timer -= delta_time
         #timer tracking how long player has been playing
         if countdown_timer <= 0:
             game_timer += delta_time
-=======
-        timer -= dt
->>>>>>> parent of b7524e0... changed timer var name
 
         #event loop
         #don't accept any keyboard inputs while the timer is counting down but we still
@@ -405,15 +395,9 @@ def main():
         for entity in all_sprites:
             screen.blit(entity.surf,entity.rect)
         #draw timer
-<<<<<<< HEAD
         if countdown_timer>=0:
             countdown_txt = timer_font.render(str(int(countdown_timer)), True, blue_font_color)
             screen.blit(countdown_txt, centerScreenTimer(timer_font.size(str(int(countdown_timer)))))
-=======
-        if timer>=0:
-            txt = timer_font.render(str(int(timer)), True, blue_font_color)
-            screen.blit(txt, centerScreenTimer(timer_font.size(str(int(timer)))))
->>>>>>> parent of b7524e0... changed timer var name
         #collision check
         
         if pygame.sprite.collide_rect(player,finishing_zone_sprite):
@@ -453,11 +437,7 @@ def main():
             
        
         pygame.display.flip()
-<<<<<<< HEAD
         delta_time = clock.tick(30) / 1000
-=======
-        dt = clock.tick(30) / 1000
->>>>>>> parent of b7524e0... changed timer var name
         #clock.tick(30)
 
     pygame.quit()
