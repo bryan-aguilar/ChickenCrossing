@@ -96,21 +96,21 @@ class Player(pygame.sprite.Sprite):
 
 class FinishingArea(pygame.sprite.Sprite):
     '''This will hold our finishing area. Finishing area will be randomly
-    selected for each new level. The width will also change depending on the level.
+    selected for each new level. The widelta_timeh will also change depending on the level.
     Starter levels will have wider finishing areas and narrow as levels increase.
     I believe only one of these sprites will be neccesary and the location
     can be updated for each level. 
     '''
     #Location should be random
-    #Size(width) should decrement(?) based on level
+    #Size(widelta_timeh) should decrement(?) based on level
     #should have a function to generate a new position
     def __init__(self,level_number):
         super(FinishingArea,self).__init__()
-        self.width = self.getWidth(level_number)
-        self.surf = pygame.Surface((self.width,25))
+        self.widelta_timeh = self.getWidelta_timeh(level_number)
+        self.surf = pygame.Surface((self.widelta_timeh,25))
         #positional arguments for rect
         self.top = FIRST_CONVEYOR_LINE[1]+(25*7)
-        self.left = self.getLeftPos(self.width)
+        self.left = self.getLeftPos(self.widelta_timeh)
         #put our surface rect in the correct position
         self.rect = self.surf.get_rect(
             left = self.left,
@@ -119,22 +119,22 @@ class FinishingArea(pygame.sprite.Sprite):
         self.surf.fill((0,255,0))
         
 
-    def getWidth(self,level_number):
-        #Returns the width that the block should be
-        #Width values are stored in a fixed list
-        level_width_sizes = [100,100,75,50,25]
-        return level_width_sizes[level_number-1]
-    def getLeftPos(self,zone_width):
+    def getWidelta_timeh(self,level_number):
+        #Returns the widelta_timeh that the block should be
+        #Widelta_timeh values are stored in a fixed list
+        level_widelta_timeh_sizes = [100,100,75,50,25]
+        return level_widelta_timeh_sizes[level_number-1]
+    def getLeftPos(self,zone_widelta_timeh):
         #returns a random position for the finishing zone to be.
-        return random.randint(0,(SCREEN_WIDTH-zone_width))
+        return random.randint(0,(SCREEN_WIDTH-zone_widelta_timeh))
 
     def generateNewPos(self,level):
         #generate a new position and size
         #should be redrawn on screen after this is called
-        self.width = self.getWidth(level)
-        self.surf = pygame.Surface((self.width,25))
+        self.widelta_timeh = self.getWidelta_timeh(level)
+        self.surf = pygame.Surface((self.widelta_timeh,25))
         self.surf.fill((0,255,0))
-        self.left = self.getLeftPos(self.width)
+        self.left = self.getLeftPos(self.widelta_timeh)
         self.rect = self.surf.get_rect(
             left = self.left,
             top = self.top
@@ -144,12 +144,12 @@ class FinishingArea(pygame.sprite.Sprite):
 class EnemyBlock(pygame.sprite.Sprite):
     '''This is our enemy block class
     The only values it holds is the size and speed at which it moves
-    Currently the size is fixed at 25 units high and the width is passed in
-    Width is stored individually for each conveyor belt in the conveyor belt class
+    Currently the size is fixed at 25 units high and the widelta_timeh is passed in
+    Widelta_timeh is stored individually for each conveyor belt in the conveyor belt class
     ''' 
     def __init__(self,conveyor_stats):
         super(EnemyBlock,self).__init__()
-        self.surf = pygame.Surface((conveyor_stats.block_width,25))
+        self.surf = pygame.Surface((conveyor_stats.block_widelta_timeh,25))
         #make it red
         self.surf.fill((255,0,0))
         #Puts our rectangle starting location based on the direction it is supposed to be moving
@@ -157,14 +157,14 @@ class EnemyBlock(pygame.sprite.Sprite):
             #speed 
             self.speed = conveyor_stats.block_speed   
             self.rect = self.surf.get_rect(
-                left = conveyor_stats.location[0]-conveyor_stats.block_width,
+                left = conveyor_stats.location[0]-conveyor_stats.block_widelta_timeh,
                 top =conveyor_stats.location[1]
             )
         elif conveyor_stats.direction == -1:
             #negates block speed to move right to left
             self.speed = conveyor_stats.block_speed*-1
             self.rect = self.surf.get_rect(
-                left = (conveyor_stats.location[0]+1000)+conveyor_stats.block_width,
+                left = (conveyor_stats.location[0]+1000)+conveyor_stats.block_widelta_timeh,
                 top = conveyor_stats.location[1]
             )
         
@@ -195,7 +195,7 @@ class ConveyorBelt():
         self.direction = 1
         #block size?
         #may not be needed here
-        self.block_width = 25
+        self.block_widelta_timeh = 25
         #how often blocks are made on belt
         self.timing = 3000
 
@@ -218,14 +218,14 @@ class ConveyorBelt():
     def setLocation(self,x,y):
         self.location = (x,y)
     
-    def setBlockWidth(self,w):
-        self.block_width = w
+    def setBlockWidelta_timeh(self,w):
+        self.block_widelta_timeh = w
 
     def generateNewLevelStats(self,level):
         '''Things that need to be generated with each new level
-        Speed, width, timing,'''
-        #block width should be randomized every level
-        self.block_width = random.randint(25,150)
+        Speed, widelta_timeh, timing,'''
+        #block widelta_timeh should be randomized every level
+        self.block_widelta_timeh = random.randint(25,150)
         #level adjustments are hard coded for each level 
         if level == 2:
             self.timing = random.randint(1000,6000)
@@ -265,9 +265,9 @@ def initConveyors(conveyor_list):
         #set timing
        
         c.setTiming(random.randint(1000,6000))
-        #set block width
+        #set block widelta_timeh
         w = random.randint(25,150)
-        c.setBlockWidth(w)
+        c.setBlockWidelta_timeh(w)
 
 def createCustomEvents(e_list,num):
     #create custom events for our conveyor lines
@@ -324,9 +324,10 @@ def main():
 
     running = True
 
-    #This will be used for our timer that starts on every level
+    #This will be used for our timers 
     countdown_timer = 6
-    dt = 0
+    delta_time = 0
+    game_timer = 0
     #Font Attriubtes
     timer_font = pygame.font.Font(None,150)
     infobar_font = pygame.font.Font(None,25)
@@ -348,7 +349,10 @@ def main():
        
         
         #subtract our delta time from our timer
-        countdown_timer -= dt
+        countdown_timer -= delta_time
+        #timer tracking how long player has been playing
+        if countdown_timer <= 0:
+            game_timer += delta_time
 
         #event loop
         #don't accept any keyboard inputs while the timer is counting down but we still
@@ -376,12 +380,20 @@ def main():
         
         #TODO: Score Timer
         #draw our information at the top
+        game_timer_txt = infobar_font.render("Time: " + str(round(game_timer,1)),True,white_font_color)
         lives_txt = infobar_font.render("Lives Left: " + str(player_lives_left),True,white_font_color)
         level_txt = infobar_font.render("Level: " + str(level_counter),True, white_font_color)
         #used for centering calculation
         level_txt_size = infobar_font.size("Level: " + str(level_counter))
+        game_timer_txt_size = infobar_font.size("Time: " + str(round(game_timer,2)))
+        
+        #blit text onto screen
         screen.blit(level_txt,(int(SCREEN_WIDTH/2 - (level_txt_size[0]/2)),0))
         screen.blit(lives_txt,(0,0))
+        #103 size will accomadate up to 999.99 
+        screen.blit(game_timer_txt, (int(SCREEN_WIDTH - 103),0))
+
+
         #draw sprites 
         for entity in all_sprites:
             screen.blit(entity.surf,entity.rect)
@@ -428,7 +440,7 @@ def main():
             
        
         pygame.display.flip()
-        dt = clock.tick(30) / 1000
+        delta_time = clock.tick(30) / 1000
         #clock.tick(30)
 
     pygame.quit()
