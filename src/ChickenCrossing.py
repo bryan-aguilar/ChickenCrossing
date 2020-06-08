@@ -324,6 +324,7 @@ def main():
 
     running = True
 
+<<<<<<< HEAD
     #This will be used for our timers 
     countdown_timer = 6
     delta_time = 0
@@ -331,10 +332,14 @@ def main():
     #Font Attriubtes
     timer_font = pygame.font.Font(None,150)
     infobar_font = pygame.font.Font(None,25)
+=======
+    #This will be used for our timer that starts on every level
+    timer = 6
+    dt = 0
+    timer_font = pygame.font.Font(None,150)
+>>>>>>> parent of b7524e0... changed timer var name
     blue_font_color = pygame.Color('black')
     grey_font_color = pygame.Color('gray19')
-    white_font_color = pygame.Color('white')
-
    
     
     while running:
@@ -349,10 +354,14 @@ def main():
        
         
         #subtract our delta time from our timer
+<<<<<<< HEAD
         countdown_timer -= delta_time
         #timer tracking how long player has been playing
         if countdown_timer <= 0:
             game_timer += delta_time
+=======
+        timer -= dt
+>>>>>>> parent of b7524e0... changed timer var name
 
         #event loop
         #don't accept any keyboard inputs while the timer is counting down but we still
@@ -362,8 +371,7 @@ def main():
                 running = False
             elif event.type == pygame.KEYDOWN:
                 #check if it was an arrow key. these are the only ones we want to pass to our player
-                #only accept inputs if we are not counting down with the timer
-                if countdown_timer <= 0:
+                if timer <= 0:
                     if event.key in ARROW_KEYS:
                         player.update(event.key)
             #Checks if the event is a custom event
@@ -397,9 +405,15 @@ def main():
         for entity in all_sprites:
             screen.blit(entity.surf,entity.rect)
         #draw timer
+<<<<<<< HEAD
         if countdown_timer>=0:
             countdown_txt = timer_font.render(str(int(countdown_timer)), True, blue_font_color)
             screen.blit(countdown_txt, centerScreenTimer(timer_font.size(str(int(countdown_timer)))))
+=======
+        if timer>=0:
+            txt = timer_font.render(str(int(timer)), True, blue_font_color)
+            screen.blit(txt, centerScreenTimer(timer_font.size(str(int(timer)))))
+>>>>>>> parent of b7524e0... changed timer var name
         #collision check
         
         if pygame.sprite.collide_rect(player,finishing_zone_sprite):
@@ -424,7 +438,7 @@ def main():
                 for c in conv_list:
                     c.generateNewLevelStats(level_counter)
                 #reset timer
-                countdown_timer = 5
+                timer = 5
             #else
                 #END GAME/Winner
         elif pygame.sprite.spritecollideany(player, conveyor_blocks) or player.rect[1] == 275 :     
@@ -439,7 +453,11 @@ def main():
             
        
         pygame.display.flip()
+<<<<<<< HEAD
         delta_time = clock.tick(30) / 1000
+=======
+        dt = clock.tick(30) / 1000
+>>>>>>> parent of b7524e0... changed timer var name
         #clock.tick(30)
 
     pygame.quit()
