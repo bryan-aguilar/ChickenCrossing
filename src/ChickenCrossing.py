@@ -10,6 +10,7 @@ from pygame.locals import(
     K_LEFT,
     K_RIGHT,
     K_ESCAPE,
+    K_RETURN,
     KEYDOWN,
     QUIT,
 )
@@ -277,17 +278,56 @@ def createCustomEvents(e_list,num):
         e_list.append(pygame.USEREVENT + (i+1))
 
 def main_menu():
-    menu = pygame_menu.Menu(SCREEN_HEIGHT,SCREEN_WIDTH, 'Chicken Crossing',theme=pygame_menu.themes.THEME_BLUE)
-    menu.add_button("Play",main)
+    menu = pygame_menu.Menu(SCREEN_HEIGHT,SCREEN_WIDTH, 'Chicken Crossing',theme=pygame_menu.themes.THEME_DARK)
+    menu.add_button("Play",run_game,onclose=pygame_menu.events.BACK)
     menu.add_button("Quit",pygame_menu.events.EXIT)
-    menu.mainloop(screen)  
+    menu.mainloop(screen)
+
+def death_screen():
+    display = True
+    screen.fill(pygame.Color('black'))
+    death_font = pygame.font.Font(None,50)
+    death_text = death_font.render('Game over. Press Enter to continue.', True, pygame.Color('white'))
+    screen.blit(death_text, centerScreenTimer(death_font.size('Game over. Press Enter to continue.')))
+    pygame.display.flip()
+    while display:
+        for event in pygame.event.get():
+            if event.type == pygame.KEYDOWN:
+                if event.key == K_RETURN:
+                    display = False
+
+def win_screen(time):
+    display = True
+    screen.fill(pygame.Color('black'))
     
+    win_font = pygame.font.Font(None,40)
+    win_text = win_font.render('Congratulations! You Won! Press Enter to continue.',True,pygame.Color('blue'))
+    
+    score_font = pygame.font.Font(None,30)
+    score_text = score_font.render("Time: " + time, True, pygame.Color('yellow'))
+    
+    win_font_center = centerScreenTimer(win_font.size("Congratulations! You Won! Press Enter to continue."))
+    
+    ##blit win_font 50 pixels above center
+    screen.blit(win_text,(win_font_center[0],win_font_center[1]-40))
+    screen.blit(score_text,centerScreenTimer(score_font.size("Time: " + time)))
+    pygame.display.flip()
+    
+    while display:
+        for event in pygame.event.get():
+            if event.type == pygame.KEYDOWN:
+                if event.key == K_RETURN:
+                    display = False
+                    
+
+
 def centerScreenTimer(txt_size):
     #returns the coordinates for the center of the screen for our counter
     center_tuple = (int((SCREEN_WIDTH/2)-(txt_size[0]/2)),int((SCREEN_HEIGHT/2)-(txt_size[1]/2)))
     return center_tuple
 
-def main():
+def run_game():
+    clock.tick(30)
     #level counter
     level_counter = 1
     #player lives
@@ -331,12 +371,13 @@ def main():
     #Font Attriubtes
     timer_font = pygame.font.Font(None,150)
     infobar_font = pygame.font.Font(None,25)
-    blue_font_color = pygame.Color('black')
+    blue_font_color = pygame.Color('blue')
     grey_font_color = pygame.Color('gray19')
     white_font_color = pygame.Color('white')
    
     
     while running:
+        
         #background color
         screen.fill(grey_font_color)
         #draw safe space
@@ -375,7 +416,7 @@ def main():
 
         #update all of our auto update
         conveyor_blocks.update()
-        #TODO: Level/Timer/Lives Bar
+
         #draw our information at the top
         game_timer_txt = infobar_font.render("Time: " + str(round(game_timer,1)),True,white_font_color)
         lives_txt = infobar_font.render("Lives Left: " + str(player_lives_left),True,white_font_color)
@@ -411,7 +452,7 @@ def main():
             -change speeds on conveyors(maybe reinit?)
             -give player extra life
             '''
-            if level_counter < 5:
+            if level_counter < 1:
                 level_counter += 1
                 player_lives_left += 1
                 finishing_zone_sprite.generateNewPos(level_counter)
@@ -423,14 +464,19 @@ def main():
                     c.generateNewLevelStats(level_counter)
                 #reset timer
                 timer = 5
-            #else
-                #END GAME/Winner
+            else:
+                #win game
+                win_screen(str(round(game_timer,1)))
+                player.kill()
+                running = False
+
         elif pygame.sprite.spritecollideany(player, conveyor_blocks) or player.rect[1] == 275 :     
                 #Decrement lives and then reset back to start if player has lives left   
                 player_lives_left -= 1
                 if player_lives_left == -1:
                     player.kill()
-                    running = False
+                    death_screen()
+                    running = False    
                 else:
                     player.resetPos()
               
@@ -440,9 +486,8 @@ def main():
         delta_time = clock.tick(30) / 1000
         #clock.tick(30)
 
-    pygame.quit()
+    
 
 
 
 main_menu()
-main()
