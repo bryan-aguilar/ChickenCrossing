@@ -51,9 +51,6 @@ class Player(pygame.sprite.Sprite):
         self.left = 1
         self.top = FIRST_CONVEYOR_LINE[1] -25
         self.generateNewStartPos()
-        
-        
-
     def generateNewStartPos(self):
         #Moves the player back to the top row in a random spot
         #This will be called when a new level is generated
@@ -68,7 +65,6 @@ class Player(pygame.sprite.Sprite):
             left = self.left,
             top = self.top
         )
-
     def update(self,key_event):
         #we only want the player to be able to move down if he is at top row
         
@@ -118,8 +114,6 @@ class FinishingArea(pygame.sprite.Sprite):
             top = self.top
         )
         self.surf.fill((0,255,0))
-        
-
     def getWidth(self,level_number):
         #Returns the width that the block should be
         #width values are stored in a fixed list
@@ -277,51 +271,7 @@ def createCustomEvents(e_list,num):
     for i in range(num):
         e_list.append(pygame.USEREVENT + (i+1))
 
-def main_menu():
-    menu = pygame_menu.Menu(SCREEN_HEIGHT,SCREEN_WIDTH, 'Chicken Crossing',theme=pygame_menu.themes.THEME_DARK)
-    menu.add_button("Play",run_game,onclose=pygame_menu.events.BACK)
-    menu.add_button("Quit",pygame_menu.events.EXIT)
-    menu.mainloop(screen)
-
-def death_screen():
-    display = True
-    screen.fill(pygame.Color('black'))
-    death_font = pygame.font.Font(None,50)
-    death_text = death_font.render('Game over. Press Enter to continue.', True, pygame.Color('white'))
-    screen.blit(death_text, centerScreenTimer(death_font.size('Game over. Press Enter to continue.')))
-    pygame.display.flip()
-    while display:
-        for event in pygame.event.get():
-            if event.type == pygame.KEYDOWN:
-                if event.key == K_RETURN:
-                    display = False
-
-def win_screen(time):
-    display = True
-    screen.fill(pygame.Color('black'))
-    
-    win_font = pygame.font.Font(None,40)
-    win_text = win_font.render('Congratulations! You Won! Press Enter to continue.',True,pygame.Color('blue'))
-    
-    score_font = pygame.font.Font(None,30)
-    score_text = score_font.render("Time: " + time, True, pygame.Color('yellow'))
-    
-    win_font_center = centerScreenTimer(win_font.size("Congratulations! You Won! Press Enter to continue."))
-    
-    ##blit win_font 50 pixels above center
-    screen.blit(win_text,(win_font_center[0],win_font_center[1]-40))
-    screen.blit(score_text,centerScreenTimer(score_font.size("Time: " + time)))
-    pygame.display.flip()
-    
-    while display:
-        for event in pygame.event.get():
-            if event.type == pygame.KEYDOWN:
-                if event.key == K_RETURN:
-                    display = False
-                    
-
-
-def centerScreenTimer(txt_size):
+def centerScreenLoc(txt_size):
     #returns the coordinates for the center of the screen for our counter
     center_tuple = (int((SCREEN_WIDTH/2)-(txt_size[0]/2)),int((SCREEN_HEIGHT/2)-(txt_size[1]/2)))
     return center_tuple
@@ -385,9 +335,7 @@ def run_game():
         #Safe space is drawn on center of screen
         first_conv_rect = (FIRST_CONVEYOR_LINE,(SCREEN_WIDTH,25*num_conv))
         screen.fill((95,141,188),first_conv_rect)
-        
-       
-        
+
         #subtract our delta time from our timer
         countdown_timer -= delta_time
         #timer tracking how long player has been playing
@@ -438,7 +386,7 @@ def run_game():
         #draw timer
         if countdown_timer>=0:
             countdown_txt = timer_font.render(str(int(countdown_timer)), True, blue_font_color)
-            screen.blit(countdown_txt, centerScreenTimer(timer_font.size(str(int(countdown_timer)))))
+            screen.blit(countdown_txt, centerScreenLoc(timer_font.size(str(int(countdown_timer)))))
         #collision check
         
         if pygame.sprite.collide_rect(player,finishing_zone_sprite):
@@ -452,7 +400,7 @@ def run_game():
             -change speeds on conveyors(maybe reinit?)
             -give player extra life
             '''
-            if level_counter < 1:
+            if level_counter < 5:
                 level_counter += 1
                 player_lives_left += 1
                 finishing_zone_sprite.generateNewPos(level_counter)
@@ -486,8 +434,47 @@ def run_game():
         delta_time = clock.tick(30) / 1000
         #clock.tick(30)
 
-    
+def main_menu():
+    menu = pygame_menu.Menu(SCREEN_HEIGHT,SCREEN_WIDTH, 'Chicken Crossing',theme=pygame_menu.themes.THEME_DARK)
+    menu.add_button("Play",run_game,onclose=pygame_menu.events.BACK)
+    menu.add_button("Quit",pygame_menu.events.EXIT)
+    menu.mainloop(screen)
 
+def death_screen():
+    display = True
+    screen.fill(pygame.Color('black'))
+    death_font = pygame.font.Font(None,50)
+    death_text = death_font.render('Game over. Press Enter to continue.', True, pygame.Color('white'))
+    screen.blit(death_text, centerScreenLoc(death_font.size('Game over. Press Enter to continue.')))
+    pygame.display.flip()
+    while display:
+        for event in pygame.event.get():
+            if event.type == pygame.KEYDOWN:
+                if event.key == K_RETURN:
+                    display = False    
+
+def win_screen(time):
+    display = True
+    screen.fill(pygame.Color('black'))
+    
+    win_font = pygame.font.Font(None,40)
+    win_text = win_font.render('Congratulations! You Won! Press Enter to continue.',True,pygame.Color('blue'))
+    
+    score_font = pygame.font.Font(None,30)
+    score_text = score_font.render("Time: " + time, True, pygame.Color('yellow'))
+    
+    win_font_center = centerScreenLoc(win_font.size("Congratulations! You Won! Press Enter to continue."))
+    
+    ##blit win_font 50 pixels above center
+    screen.blit(win_text,(win_font_center[0],win_font_center[1]-40))
+    screen.blit(score_text,centerScreenLoc(score_font.size("Time: " + time)))
+    pygame.display.flip()
+    
+    while display:
+        for event in pygame.event.get():
+            if event.type == pygame.KEYDOWN:
+                if event.key == K_RETURN:
+                    display = False
 
 
 main_menu()
