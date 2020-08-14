@@ -7,3 +7,4 @@ Requires python and module installation using requirements file. \
 ```pip install -r requirements.txt```
 
 ## Demo
+![demo](https://github.com/bryan-aguilar/ChickenCrossing/blob/master/misc/demo.gif)
